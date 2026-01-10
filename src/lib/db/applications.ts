@@ -93,8 +93,12 @@ export async function getApplicationById(
       };
     }
 
-    // Validate ID format (basic UUID check)
-    if (!id || typeof id !== 'string' || id.trim() === '') {
+    const applicationId = typeof id === 'string' ? id.trim() : '';
+    const UUID_RE =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+      // Validate ID format (basic UUID check)
+      if (!applicationId || !UUID_RE.test(applicationId)) {
       return {
         success: false,
         error: 'Invalid application ID'
@@ -105,7 +109,7 @@ export async function getApplicationById(
     const { data, error } = await supabase
       .from('applications')
       .select('*')
-      .eq('id', id)
+      .eq('id', applicationId)
       .maybeSingle();
 
     if (error) {

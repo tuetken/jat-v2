@@ -132,3 +132,70 @@ export async function getApplicationById(
     };
   }
 }
+
+/**
+ * Creates a new application for the authenticated user.
+ * 
+ * User identity is derived from server-side auth context (NOT from client input).
+ * RLS policies validate that auth.uid() = user_id on INSERT.
+ * 
+ * @param data - Application data (excluding user_id, id, timestamps)
+ * @returns Promise with typed result containing the created application or error
+ */
+export async function createApplication(
+  data: {
+    company_name: string;
+    position_title: string;
+    application_date: string;
+    status: Application['status'];
+    notes?: string | null;
+  }
+): Promise<DataResult<Application>> {
+  try {
+    const supabase = await createClient();
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated'
+      };
+    }
+
+    // Insert application with user_id from authenticated context
+    // RLS policy validates that auth.uid() = user_id on insert
+    const { data: newApplication, error } = await supabase
+      .from('applications')
+      .insert({
+        user_id: user.id,
+        company_name: data.company_name,
+        position_title: data.position_title,
+        application_date: data.application_date,
+        status: data.status,
+        notes: data.notes ?? null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating application:', error);
+      return {
+        success: false,
+        error: `Failed to create application: ${error.message}`
+      };
+    }
+
+    return {
+      success: true,
+      data: newApplication as Application
+    };
+  } catch (error) {
+    console.error('Unexpected error in createApplication:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred while creating the application'
+    };
+  }
+}

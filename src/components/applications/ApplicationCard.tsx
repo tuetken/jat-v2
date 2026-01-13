@@ -33,8 +33,10 @@ function getStatusColor(status: Application['status']): string {
 }
 
 // Helper function to format date
+// Parse "YYYY-MM-DD" as local date to avoid timezone offset issues
 function formatDate(dateString: string): string {
-  const date = new Date(dateString)
+  const [year, month, day] = dateString.split('-').map(Number)
+  const date = new Date(year, month - 1, day) // month is 0-indexed
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',

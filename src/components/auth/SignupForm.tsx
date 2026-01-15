@@ -45,7 +45,20 @@ export function SignupForm() {
       })
 
       if (signUpError) {
-        setError(signUpError.message)
+        // Translate technical Supabase errors to user-friendly messages
+        const userFriendlyMessage = 
+          signUpError.message.toLowerCase().includes('already registered') ||
+          signUpError.message.toLowerCase().includes('already exists')
+            ? 'This email is already registered. Please sign in instead.'
+            : signUpError.message.toLowerCase().includes('password')
+            ? 'Password does not meet requirements. Please use a stronger password.'
+            : signUpError.message.toLowerCase().includes('email')
+            ? 'Please enter a valid email address.'
+            : signUpError.message.toLowerCase().includes('too many requests')
+            ? 'Too many signup attempts. Please wait a few minutes and try again.'
+            : 'Unable to create account. Please try again later.'
+        
+        setError(userFriendlyMessage)
         return
       }
 
@@ -59,7 +72,7 @@ export function SignupForm() {
         setNeedsEmailConfirmation(true)
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.')
+      setError('Unable to connect. Please check your internet connection and try again.')
       console.error('Signup error:', err)
     } finally {
       setIsLoading(false)
@@ -68,13 +81,14 @@ export function SignupForm() {
 
   if (needsEmailConfirmation) {
     return (
-      <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
+      <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20" role="status" aria-live="polite">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
               className="h-5 w-5 text-blue-400"
               viewBox="0 0 20 20"
               fill="currentColor"
+              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"
@@ -107,6 +121,7 @@ export function SignupForm() {
           type="email"
           id="email"
           autoComplete="email"
+          autoFocus
           className="mt-1"
           placeholder="you@example.com"
           hasError={!!errors.email}
@@ -155,7 +170,7 @@ export function SignupForm() {
       </div>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-3 dark:bg-red-900/20">
+        <div className="rounded-md bg-red-50 p-3 dark:bg-red-900/20" role="alert" aria-live="polite">
           <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
         </div>
       )}

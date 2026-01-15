@@ -199,3 +199,164 @@ export async function createApplication(
     };
   }
 }
+
+/**
+ * Updates an existing application for the authenticated user.
+ * 
+ * User identity is derived from server-side auth context.
+ * RLS policies validate that the application belongs to auth.uid().
+ * Only provided fields will be updated.
+ * 
+ * @param id - The UUID of the application to update
+ * @param data - Partial application data to update
+ * @returns Promise with typed result containing the updated application or error
+ */
+export async function updateApplication(
+  id: string,
+  data: {
+    company_name?: string;
+    position_title?: string;
+    application_date?: string;
+    status?: Application['status'];
+    notes?: string | null;
+  }
+): Promise<DataResult<Application>> {
+  try {
+    const supabase = await createClient();
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated'
+      };
+    }
+
+    const applicationId = typeof id === 'string' ? id.trim() : '';
+    const UUID_RE =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    // Validate ID format
+    if (!applicationId || !UUID_RE.test(applicationId)) {
+      return {
+        success: false,
+        error: 'Invalid application ID'
+      };
+    }
+
+    // Update application - RLS automatically validates ownership
+    const { data: updatedApplication, error } = await supabase
+      .from('applications')
+      .update({
+        ...(data.company_name !== undefined && { company_name: data.company_name }),
+        ...(data.position_title !== undefined && { position_title: data.position_title }),
+        ...(data.application_date !== undefined && { application_date: data.application_date }),
+        ...(data.status !== undefined && { status: data.status }),
+        ...(data.notes !== undefined && { notes: data.notes }),
+      })
+      .eq('id', applicationId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating application:', error);
+      return {
+        success: false,
+        error: `Failed to update application: ${error.message}`
+      };
+    }
+
+    if (!updatedApplication) {
+      return {
+        success: false,
+        error: 'Application not found or access denied'
+      };
+    }
+
+    return {
+      success: true,
+      data: updatedApplication as Application
+    };
+  } catch (error) {
+    console.error('Unexpected error in updateApplication:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred while updating the application'
+    };
+  }
+}
+
+/**
+ * Deletes an application for the authenticated user.
+ * 
+ * User identity is derived from server-side auth context.
+ * RLS policies validate that the application belongs to auth.uid().
+ * 
+ * @param id - The UUID of the application to delete
+ * @returns Promise with typed result indicating success or error
+ */
+export async function deleteApplication(
+  id: string
+): Promise<DataResult<{ id: string }>> {
+  try {
+    const supabase = await createClient();
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated'
+      };
+    }
+
+    const applicationId = typeof id === 'string' ? id.trim() : '';
+    const UUID_RE =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    // Validate ID format
+    if (!applicationId || !UUID_RE.test(applicationId)) {
+      return {
+        success: false,
+        error: 'Invalid application ID'
+      };
+    }
+
+    // Delete application - RLS automatically validates ownership
+    const { data, error } = await supabase
+      .from('applications')
+      .delete()
+      .eq('id', applicationId)
+      .select();
+
+    if (error) {
+      console.error('Error deleting application:', error);
+      return {
+        success: false,
+        error: `Failed to delete application: ${error.message}`
+      };
+    }
+
+    // Verify that a row was actually deleted
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        error: `Application not found or access denied: ${applicationId}`
+      };
+    }
+
+    return {
+      success: true,
+      data: { id: applicationId }
+    };
+  } catch (error) {
+    console.error('Unexpected error in deleteApplication:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred while deleting the application'
+    };
+  }
+}

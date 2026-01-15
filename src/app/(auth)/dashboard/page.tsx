@@ -1,6 +1,7 @@
 import { getApplications } from '@/lib/db/applications'
 import { ApplicationList } from '@/components/applications/ApplicationList'
 import Link from 'next/link'
+import { Button } from '@/components/ui'
 
 /**
  * Dashboard page - displays read-only list of user's job applications.
@@ -33,11 +34,10 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-600">
             {applications.length} {applications.length === 1 ? 'application' : 'applications'}
           </p>
-          <Link
-            href="/applications/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          >
-            Create New Application
+          <Link href="/applications/new">
+            <Button className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg">
+              Create New Application
+            </Button>
           </Link>
         </div>
       </div>

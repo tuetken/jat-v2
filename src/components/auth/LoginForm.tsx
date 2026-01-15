@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/client'
+import { Button, Input, Label } from '@/components/ui'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -56,19 +57,15 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-zinc-900 dark:text-zinc-100"
-        >
-          Email
-        </label>
-        <input
+        <Label htmlFor="email">Email</Label>
+        <Input
           {...register('email')}
           type="email"
           id="email"
           autoComplete="email"
-          className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500"
+          className="mt-1"
           placeholder="you@example.com"
+          hasError={!!errors.email}
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -78,19 +75,15 @@ export function LoginForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-zinc-900 dark:text-zinc-100"
-        >
-          Password
-        </label>
-        <input
+        <Label htmlFor="password">Password</Label>
+        <Input
           {...register('password')}
           type="password"
           id="password"
           autoComplete="current-password"
-          className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500"
+          className="mt-1"
           placeholder="••••••••"
+          hasError={!!errors.password}
         />
         {errors.password && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -105,13 +98,9 @@ export function LoginForm() {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-      >
+      <Button type="submit" disabled={isLoading} fullWidth>
         {isLoading ? 'Signing in...' : 'Sign in'}
-      </button>
+      </Button>
     </form>
   )
 }

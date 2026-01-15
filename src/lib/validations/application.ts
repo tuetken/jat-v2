@@ -50,13 +50,13 @@ export const createApplicationSchema = z.object({
     }, 'Invalid date'),
   
   status: z.enum(applicationStatuses, {
-    errorMap: () => ({ message: 'Invalid status value' }),
+    message: 'Invalid status value',
   }),
   
   notes: z
     .string()
     .max(2000, 'Notes must be less than 2000 characters')
-    .optional()
+    .nullish()
     .transform((val) => val && val.trim() === '' ? null : val),
 });
 
@@ -103,13 +103,13 @@ export const updateApplicationSchema = z.object({
     .optional(),
   
   status: z.enum(applicationStatuses, {
-    errorMap: () => ({ message: 'Invalid status value' }),
+    message: 'Invalid status value',
   }).optional(),
   
   notes: z
     .string()
     .max(2000, 'Notes must be less than 2000 characters')
-    .optional()
+    .nullish()
     .transform((val) => val && val.trim() === '' ? null : val),
 });
 

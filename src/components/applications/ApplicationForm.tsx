@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { createApplicationSchema, type CreateApplicationFormData } from '@/lib/validations/application'
 import { createApplicationAction } from '@/app/(auth)/actions'
 import { useState } from 'react'
+import { Button, Input, Select, Textarea, Label } from '@/components/ui'
 
 /**
  * ApplicationForm - Client Component for creating new job applications
@@ -31,18 +32,18 @@ export function ApplicationForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateApplicationFormData>({
+  } = useForm({
     resolver: zodResolver(createApplicationSchema),
     defaultValues: {
       company_name: '',
       position_title: '',
       application_date: new Date().toISOString().split('T')[0], // Default to today
-      status: 'applied',
+      status: 'applied' as const,
       notes: '',
     },
   })
 
-  const onSubmit = async (data: CreateApplicationFormData) => {
+  const onSubmit = async (data: any) => {
     setServerError(null)
     setIsSubmitting(true)
 
@@ -83,15 +84,16 @@ export function ApplicationForm() {
 
       {/* Company Name */}
       <div>
-        <label htmlFor="company_name" className="block text-sm font-medium text-gray-700 mb-1">
+        <Label htmlFor="company_name" className="mb-1 text-gray-700 dark:text-gray-700">
           Company Name *
-        </label>
-        <input
+        </Label>
+        <Input
           id="company_name"
           type="text"
           {...register('company_name')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          hasError={!!errors.company_name}
         />
         {errors.company_name && (
           <p className="mt-1 text-sm text-red-600">{errors.company_name.message}</p>
@@ -100,15 +102,16 @@ export function ApplicationForm() {
 
       {/* Position Title */}
       <div>
-        <label htmlFor="position_title" className="block text-sm font-medium text-gray-700 mb-1">
+        <Label htmlFor="position_title" className="mb-1 text-gray-700 dark:text-gray-700">
           Position Title *
-        </label>
-        <input
+        </Label>
+        <Input
           id="position_title"
           type="text"
           {...register('position_title')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          hasError={!!errors.position_title}
         />
         {errors.position_title && (
           <p className="mt-1 text-sm text-red-600">{errors.position_title.message}</p>
@@ -117,15 +120,16 @@ export function ApplicationForm() {
 
       {/* Application Date */}
       <div>
-        <label htmlFor="application_date" className="block text-sm font-medium text-gray-700 mb-1">
+        <Label htmlFor="application_date" className="mb-1 text-gray-700 dark:text-gray-700">
           Application Date *
-        </label>
-        <input
+        </Label>
+        <Input
           id="application_date"
           type="date"
           {...register('application_date')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          hasError={!!errors.application_date}
         />
         {errors.application_date && (
           <p className="mt-1 text-sm text-red-600">{errors.application_date.message}</p>
@@ -134,21 +138,22 @@ export function ApplicationForm() {
 
       {/* Status */}
       <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+        <Label htmlFor="status" className="mb-1 text-gray-700 dark:text-gray-700">
           Status *
-        </label>
-        <select
+        </Label>
+        <Select
           id="status"
           {...register('status')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          hasError={!!errors.status}
         >
           <option value="applied">Applied</option>
           <option value="interviewing">Interviewing</option>
           <option value="offer">Offer</option>
           <option value="rejected">Rejected</option>
           <option value="withdrawn">Withdrawn</option>
-        </select>
+        </Select>
         {errors.status && (
           <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
         )}
@@ -156,15 +161,16 @@ export function ApplicationForm() {
 
       {/* Notes */}
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+        <Label htmlFor="notes" className="mb-1 text-gray-700 dark:text-gray-700">
           Notes <span className="text-gray-500 font-normal">(optional)</span>
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="notes"
           {...register('notes')}
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          hasError={!!errors.notes}
         />
         {errors.notes && (
           <p className="mt-1 text-sm text-red-600">{errors.notes.message}</p>
@@ -173,13 +179,13 @@ export function ApplicationForm() {
 
       {/* Submit Button */}
       <div className="flex gap-3">
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg"
         >
           {isSubmitting ? 'Creating...' : 'Create Application'}
-        </button>
+        </Button>
         <a
           href="/dashboard"
           className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"

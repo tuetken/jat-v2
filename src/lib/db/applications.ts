@@ -326,16 +326,25 @@ export async function deleteApplication(
     }
 
     // Delete application - RLS automatically validates ownership
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('applications')
       .delete()
-      .eq('id', applicationId);
+      .eq('id', applicationId)
+      .select();
 
     if (error) {
       console.error('Error deleting application:', error);
       return {
         success: false,
         error: `Failed to delete application: ${error.message}`
+      };
+    }
+
+    // Verify that a row was actually deleted
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        error: `Application not found or access denied: ${applicationId}`
       };
     }
 

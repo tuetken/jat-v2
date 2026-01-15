@@ -45,17 +45,19 @@ export async function PATCH(
       );
     }
 
-    // Parse and validate request body
-    const body = await request.json();
-    const validatedData = updateApplicationSchema.parse(body);
+    // Parse raw request body
+    const rawBody = await request.json();
 
-    // Ensure at least one field is being updated
-    if (Object.keys(validatedData).length === 0) {
+    // Ensure at least one field is being updated (before Zod transforms)
+    if (Object.keys(rawBody).length === 0) {
       return NextResponse.json(
         { error: 'No fields to update' },
         { status: 400 }
       );
     }
+
+    // Validate request body with Zod
+    const validatedData = updateApplicationSchema.parse(rawBody);
 
     // Update application via data access layer
     const result = await updateApplication(id, {

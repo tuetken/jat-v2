@@ -10,10 +10,14 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createApplicationSchema, type CreateApplicationFormData } from '@/lib/validations/application'
+import { createApplicationSchema } from '@/lib/validations/application'
 import { createApplicationAction } from '@/app/(auth)/actions'
 import { useState } from 'react'
 import { Button, Input, Select, Textarea, Label } from '@/components/ui'
+import { z } from 'zod'
+
+// Form values type - input type before Zod transform
+type ApplicationFormValues = z.input<typeof createApplicationSchema>
 
 /**
  * ApplicationForm - Client Component for creating new job applications
@@ -32,7 +36,7 @@ export function ApplicationForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<ApplicationFormValues>({
     resolver: zodResolver(createApplicationSchema),
     defaultValues: {
       company_name: '',
@@ -43,7 +47,7 @@ export function ApplicationForm() {
     },
   })
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ApplicationFormValues) => {
     setServerError(null)
     setIsSubmitting(true)
 

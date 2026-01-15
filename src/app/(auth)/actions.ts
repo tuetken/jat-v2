@@ -52,7 +52,7 @@ export async function createApplicationAction(formData: FormData) {
   const validation = createApplicationSchema.safeParse(rawData)
   
   if (!validation.success) {
-    const firstError = validation.error.errors[0]
+    const firstError = validation.error.issues[0]
     return {
       success: false,
       error: firstError?.message || 'Validation failed'

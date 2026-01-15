@@ -49,9 +49,17 @@ export async function getApplications(): Promise<DataResult<Application[]>> {
 
     if (error) {
       console.error('Error fetching applications:', error);
+      // Provide user-friendly error messages based on error type
+      const errorMessage = error.message.toLowerCase().includes('network') ||
+                          error.message.toLowerCase().includes('fetch')
+        ? 'Network error. Please check your internet connection.'
+        : error.message.toLowerCase().includes('timeout')
+        ? 'Request timed out. Please try again.'
+        : 'Unable to load applications. Please try again.';
+      
       return {
         success: false,
-        error: `Failed to fetch applications: ${error.message}`
+        error: errorMessage
       };
     }
 
@@ -181,9 +189,19 @@ export async function createApplication(
 
     if (error) {
       console.error('Error creating application:', error);
+      // Provide user-friendly error messages based on error type
+      const errorMessage = error.message.toLowerCase().includes('network') ||
+                          error.message.toLowerCase().includes('fetch')
+        ? 'Network error. Please check your internet connection.'
+        : error.message.toLowerCase().includes('timeout')
+        ? 'Request timed out. Please try again.'
+        : error.message.toLowerCase().includes('violates')
+        ? 'Invalid data. Please check your input.'
+        : 'Unable to create application. Please try again.';
+      
       return {
         success: false,
-        error: `Failed to create application: ${error.message}`
+        error: errorMessage
       };
     }
 
@@ -262,9 +280,19 @@ export async function updateApplication(
 
     if (error) {
       console.error('Error updating application:', error);
+      // Provide user-friendly error messages based on error type
+      const errorMessage = error.message.toLowerCase().includes('network') ||
+                          error.message.toLowerCase().includes('fetch')
+        ? 'Network error. Please check your internet connection.'
+        : error.message.toLowerCase().includes('timeout')
+        ? 'Request timed out. Please try again.'
+        : error.message.toLowerCase().includes('violates')
+        ? 'Invalid data. Please check your input.'
+        : 'Unable to update application. Please try again.';
+      
       return {
         success: false,
-        error: `Failed to update application: ${error.message}`
+        error: errorMessage
       };
     }
 
@@ -334,9 +362,17 @@ export async function deleteApplication(
 
     if (error) {
       console.error('Error deleting application:', error);
+      // Provide user-friendly error messages based on error type
+      const errorMessage = error.message.toLowerCase().includes('network') ||
+                          error.message.toLowerCase().includes('fetch')
+        ? 'Network error. Please check your internet connection.'
+        : error.message.toLowerCase().includes('timeout')
+        ? 'Request timed out. Please try again.'
+        : 'Unable to delete application. Please try again.';
+      
       return {
         success: false,
-        error: `Failed to delete application: ${error.message}`
+        error: errorMessage
       };
     }
 

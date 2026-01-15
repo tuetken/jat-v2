@@ -40,14 +40,29 @@ export function LoginForm() {
       })
 
       if (signInError) {
-        setError(signInError.message)
+        // Translate technical Supabase errors to user-friendly messages
+        const userFriendlyMessage = 
+          signInError.message.toLowerCase().includes('invalid') ||
+          signInError.message.toLowerCase().includes('credentials')
+            ? 'Invalid email or password. Please check your credentials and try again.'
+            : signInError.message.toLowerCase().includes('email not confirmed')
+            ? 'Please verify your email address before signing in. Check your inbox for a confirmation link.'
+            : signInError.message.toLowerCase().includes('too many requests')
+            ? 'Too many login attempts. Please wait a few minutes and try again.'
+            : 'Unable to sign in. Please try again later.'
+        
+        setError(userFriendlyMessage)
         return
       }
 
-      router.push('/dashboard')
+      // Check for redirect parameter in URL
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+      
+      router.push(redirectTo)
       router.refresh()
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.')
+      setError('Unable to connect. Please check your internet connection and try again.')
       console.error('Login error:', err)
     } finally {
       setIsLoading(false)
@@ -63,6 +78,7 @@ export function LoginForm() {
           type="email"
           id="email"
           autoComplete="email"
+          autoFocus
           className="mt-1"
           placeholder="you@example.com"
           hasError={!!errors.email}
@@ -93,7 +109,7 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <div className="rounded-md bg-red-50 p-3 dark:bg-red-900/20">
+        <div className="rounded-md bg-red-50 p-3 dark:bg-red-900/20" role="alert" aria-live="polite">
           <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
         </div>
       )}

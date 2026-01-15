@@ -67,11 +67,23 @@ export function ApplicationForm() {
 
       // If we reach here, there was an error (redirect prevents this on success)
       if (result && !result.success) {
-        setServerError(result.error)
+        // Translate technical errors to user-friendly messages
+        const userFriendlyError = 
+          result.error.toLowerCase().includes('authentication') ||
+          result.error.toLowerCase().includes('not authenticated')
+            ? 'Your session has expired. Please refresh the page and sign in again.'
+            : result.error.toLowerCase().includes('validation')
+            ? 'Please check all fields and try again.'
+            : result.error.toLowerCase().includes('network') ||
+              result.error.toLowerCase().includes('connection')
+            ? 'Unable to save. Please check your internet connection and try again.'
+            : 'Unable to save application. Please try again or contact support if the problem persists.'
+        
+        setServerError(userFriendlyError)
       }
     } catch (error) {
       console.error('Form submission error:', error)
-      setServerError('An unexpected error occurred. Please try again.')
+      setServerError('Unable to connect. Please check your internet connection and try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -81,7 +93,7 @@ export function ApplicationForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Server Error Display */}
       {serverError && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4" role="alert" aria-live="polite">
           <p className="text-red-800 text-sm">{serverError}</p>
         </div>
       )}
@@ -97,6 +109,7 @@ export function ApplicationForm() {
           {...register('company_name')}
           className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          autoFocus
           hasError={!!errors.company_name}
         />
         {errors.company_name && (
@@ -133,6 +146,7 @@ export function ApplicationForm() {
           {...register('application_date')}
           className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-300 dark:bg-white dark:text-zinc-900"
           disabled={isSubmitting}
+          max={new Date().toISOString().split('T')[0]}
           hasError={!!errors.application_date}
         />
         {errors.application_date && (
@@ -192,7 +206,12 @@ export function ApplicationForm() {
         </Button>
         <a
           href="/dashboard"
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={(e) => {
+            if (isSubmitting) {
+              e.preventDefault()
+            }
+          }}
         >
           Cancel
         </a>

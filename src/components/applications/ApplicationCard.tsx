@@ -46,7 +46,7 @@ function formatDate(dateString: string): string {
 
 export function ApplicationCard({ application }: ApplicationCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors">
+    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all duration-200">
       <div className="flex justify-between items-start gap-4">
         {/* Main Content */}
         <div className="flex-1 space-y-2">

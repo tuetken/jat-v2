@@ -2,6 +2,7 @@ import { getApplications } from '@/lib/db/applications'
 import { ApplicationList } from '@/components/applications/ApplicationList'
 import Link from 'next/link'
 import { Button } from '@/components/ui'
+import { RefreshButton } from '@/components/ui/RefreshButton'
 
 /**
  * Dashboard page - displays read-only list of user's job applications.
@@ -36,12 +37,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-red-800">
               We&apos;re having trouble loading your applications. Please refresh the page or try again later.
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200 font-medium transition-colors"
-            >
-              Refresh Page
-            </button>
+            <RefreshButton />
           </div>
         </div>
       </div>

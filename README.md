@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JAT v2 - Job Application Tracker
 
-## Getting Started
+A modern, secure job application tracking system built with Next.js 16, Supabase, and TypeScript.
 
-First, run the development server:
+## Features
+
+- 🔐 **Secure Authentication** - Email/password auth powered by Supabase
+- 🛡️ **Row Level Security** - Database-enforced data isolation
+- 📝 **Application Management** - Track job applications with status, dates, and notes
+- 🎨 **Modern UI** - Responsive design with dark mode support
+- ⚡ **Server Components** - Fast, SEO-friendly rendering with Next.js 16
+- 🔒 **Type-Safe** - Full TypeScript coverage with Zod validation
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Auth & Database:** Supabase (PostgreSQL + Auth)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **Forms:** React Hook Form + Zod
+- **Deployment:** Vercel
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+ installed
+- A Supabase project ([create one free](https://supabase.com))
+
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <your-repo-url>
+cd jat-v2
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Set up environment variables**
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+Get these values from your Supabase project: **Settings** > **API**
+
+4. **Set up the database**
+
+- Go to your Supabase dashboard
+- Navigate to **SQL Editor**
+- Run the migration file: `supabase_migration_applications.sql`
+
+5. **Run the development server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/            # Protected routes (dashboard, applications)
+│   ├── (public)/          # Public routes (login, signup)
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── applications/      # Application-specific components
+│   ├── auth/             # Auth forms
+│   └── ui/               # Reusable UI primitives
+└── lib/
+    ├── db/               # Database access layer
+    ├── supabase/         # Supabase client setup
+    ├── types/            # TypeScript types
+    └── validations/      # Zod schemas
+```
 
-## Learn More
+## Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # Start development server
+npm run build    # Create production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-## Deploy on Vercel
+### Quick Deploy to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your code to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel dashboard
+4. Deploy!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security
+
+- ✅ Row Level Security (RLS) enforced at database level
+- ✅ Server-side authentication checks on all protected routes
+- ✅ No service role key used (prevents RLS bypass)
+- ✅ Client-side Supabase client only for auth operations
+- ✅ All data queries use authenticated context
+
+## Documentation
+
+- [Project Context](./project-context.md) - Architecture and development guidelines
+- [Architecture](./ARCHITECTURE.md) - Detailed system design
+- [Deployment Guide](./DEPLOYMENT.md) - Production deployment checklist
+- [RLS Verification](./RLS_VERIFICATION_CHECKLIST.md) - Security testing procedures
+
+## License
+
+MIT

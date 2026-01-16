@@ -22,6 +22,8 @@ async function RedirectHandler() {
   } else {
     redirect('/login')
   }
+  
+  return null
 }
 
 export default async function Home() {

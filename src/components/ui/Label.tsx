@@ -1,6 +1,6 @@
 import { forwardRef, LabelHTMLAttributes } from 'react'
 
-export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {}
+export type LabelProps = LabelHTMLAttributes<HTMLLabelElement>
 
 /**
  * Label - Reusable label component for form fields
